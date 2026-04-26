@@ -1,0 +1,6 @@
+method,t_count,t_depth,cnot_count,accuracy,k_bits
+approx_truncated,464,128,720,0.9392980958938164,8
+hybrid,688,160,1056,0.98828125,10
+hybrid,784,160,1200,0.99951171875,10
+hybrid,880,160,1344,0.9999847412109375,10
+exact,976,160,1520,1.0,

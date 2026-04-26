@@ -1,0 +1,21 @@
+n_bits,profile,method,t_count,t_depth,cnot_count,accuracy,t_savings_%,reason
+8,exact,exact,232,64,376,1.0,0.0,Exact division selected: accuracy requirement is 1.0 or very
+8,high_precision,exact,232,64,376,1.0,0.0,Exact division selected: accuracy requirement is 1.0 or very
+8,standard,hybrid,208,64,324,0.996094,10.34,"Hybrid division selected: exact for top 6 bits, approximate "
+8,fast,hybrid,184,64,288,0.96875,20.69,"Hybrid division selected: exact for top 4 bits, approximate "
+8,ultra_fast,hybrid,184,64,288,0.96875,20.69,"Hybrid division selected: exact for top 4 bits, approximate "
+16,exact,exact,976,160,1520,1.0,0.0,Exact division selected: accuracy requirement is 1.0 or very
+16,high_precision,hybrid,784,160,1200,0.999512,19.67,"Hybrid division selected: exact for top 8 bits, approximate "
+16,standard,hybrid,784,160,1200,0.999512,19.67,"Hybrid division selected: exact for top 8 bits, approximate "
+16,fast,hybrid,688,160,1056,0.988281,29.51,"Hybrid division selected: exact for top 4 bits, approximate "
+16,ultra_fast,approx_truncated,464,128,720,0.939298,52.46,Approximate (truncated top-8/16 bits) selected: accuracy tar
+32,exact,exact,4000,384,6112,1.0,0.0,Exact division selected: accuracy requirement is 1.0 or very
+32,high_precision,approx_truncated,1952,320,2976,0.999512,51.2,Approximate (truncated top-16/32 bits) selected: accuracy ta
+32,standard,approx_truncated,1952,320,2976,0.999512,51.2,Approximate (truncated top-16/32 bits) selected: accuracy ta
+32,fast,approx_truncated,1952,320,2976,0.999512,51.2,Approximate (truncated top-16/32 bits) selected: accuracy ta
+32,ultra_fast,approx_truncated,1952,320,2976,0.999512,51.2,Approximate (truncated top-16/32 bits) selected: accuracy ta
+64,exact,hybrid,14656,896,22080,1.0,9.49,"Hybrid division selected: exact for top 48 bits, approximate"
+64,high_precision,approx_truncated,8000,768,12096,1.0,50.59,Approximate (truncated top-32/64 bits) selected: accuracy ta
+64,standard,approx_truncated,8000,768,12096,1.0,50.59,Approximate (truncated top-32/64 bits) selected: accuracy ta
+64,fast,approx_truncated,8000,768,12096,1.0,50.59,Approximate (truncated top-32/64 bits) selected: accuracy ta
+64,ultra_fast,approx_truncated,8000,768,12096,1.0,50.59,Approximate (truncated top-32/64 bits) selected: accuracy ta

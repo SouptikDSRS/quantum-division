@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quantum Division Explorer</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── CSS Variables ─────────────────────────────────────────── */
+    :root {
+      --bg:         #0a0c10;
+      --surface:    #111318;
+      --surface2:   #181c24;
+      --border:     #232837;
+      --accent:     #4af0b4;
+      --accent2:    #7c6af5;
+      --accent3:    #f05a7e;
+      --text:       #e8eaf2;
+      --muted:      #6b7280;
+      --mono:       'JetBrains Mono', monospace;
+      --sans:       'Space Grotesk', sans-serif;
+      --radius:     12px;
+      --radius-sm:  7px;
+      --glow:       0 0 24px rgba(74,240,180,0.13);
+    }
+
+    /* ── Reset & Base ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── Background grid texture ──────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(74,240,180,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(74,240,180,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Layout ───────────────────────────────────────────────── */
+    .page-wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 20px 80px;
+    }
+
+    /* ── Header ───────────────────────────────────────────────── */
+    .header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .header-label {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(74,240,180,0.08);
+      border: 1px solid rgba(74,240,180,0.2);
+      border-radius: 50px;
+      padding: 4px 14px;
+      margin-bottom: 18px;
+    }
+    .header h1 {
+      font-size: clamp(28px, 5vw, 48px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+    }
+    .header h1 span {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .header p {
+      color: var(--muted);
+      margin-top: 12px;
+      font-size: 16px;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ── Card ─────────────────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+    .card-title {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-title::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 6px var(--accent);
+    }
+
+    /* ── Form grid ────────────────────────────────────────────── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 7px;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 15px;
+      padding: 11px 14px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      appearance: none;
+    }
+    .field input:focus,
+    .field select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(74,240,180,0.12);
+    }
+    .field select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+      cursor: pointer;
+    }
+
+    /* ── Extra params panel ───────────────────────────────────── */
+    .extra-params {
+      display: none;
+      background: rgba(74,240,180,0.04);
+      border: 1px solid rgba(74,240,180,0.12);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      margin-bottom: 20px;
+      gap: 16px;
+    }
+    .extra-params.visible {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    }
+    .extra-params .param-hint {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 5px;
+    }
+
+    /* ── Submit button ────────────────────────────────────────── */
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(135deg, var(--accent), #26d8a0);
+      border: none;
+      border-radius: var(--radius-sm);
+      color: #0a0c10;
+      font-family: var(--sans);
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      padding: 15px;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-submit:hover  { opacity: 0.92; }
+    .btn-submit:active { transform: scale(0.99); }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-submit .spinner {
+      display: none;
+      width: 18px; height: 18px;
+      border: 2.5px solid rgba(0,0,0,0.3);
+      border-top-color: #000;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    .btn-submit.loading .spinner { display: inline-block; }
+    .btn-submit.loading .btn-label { opacity: 0.6; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Error banner ─────────────────────────────────────────── */
+    .error-banner {
+      background: rgba(240,90,126,0.1);
+      border: 1px solid rgba(240,90,126,0.3);
+      border-radius: var(--radius-sm);
+      color: #f88;
+      font-family: var(--mono);
+      font-size: 13px;
+      padding: 14px 18px;
+      margin-bottom: 24px;
+      display: none;
+    }
+    .error-banner.visible { display: block; }
+
+    /* ── Results section ──────────────────────────────────────── */
+    #results { display: none; }
+    #results.visible { display: block; }
+
+    /* ── Equation block ───────────────────────────────────────── */
+    .equation-block {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 22px;
+      background: var(--surface2);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+    .eq-num {
+      font-family: var(--mono);
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .eq-op {
+      font-family: var(--mono);
+      font-size: 26px;
+      color: var(--muted);
+    }
+    .eq-result-box {
+      margin-left: auto;
+      text-align: right;
+    }
+    .eq-result-label {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .eq-result-val {
+      font-family: var(--mono);
+      font-size: 22px;
+      font-weight: 700;
+    }
+    .eq-result-val.exact   { color: var(--accent); }
+    .eq-result-val.approx  { color: #f5a742; }
+
+    /* ── Status pill ──────────────────────────────────────────── */
+    .pill {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      padding: 3px 10px;
+      border-radius: 50px;
+      text-transform: uppercase;
+    }
+    .pill-exact   { background: rgba(74,240,180,0.12); color: var(--accent); border: 1px solid rgba(74,240,180,0.25); }
+    .pill-approx  { background: rgba(245,167,66,0.12); color: #f5a742;        border: 1px solid rgba(245,167,66,0.25); }
+    .pill-method  { background: rgba(124,106,245,0.12); color: var(--accent2); border: 1px solid rgba(124,106,245,0.25); }
+
+    /* ── Metrics grid ─────────────────────────────────────────── */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .metric-tile {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .metric-tile::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--accent);
+    }
+    .metric-tile.accent2::after { background: var(--accent2); }
+    .metric-tile.accent3::after { background: var(--accent3); }
+    .metric-tile.warn::after    { background: #f5a742; }
+
+    .metric-label {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .metric-val {
+      font-family: var(--mono);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .metric-val.green  { color: var(--accent); }
+    .metric-val.purple { color: var(--accent2); }
+    .metric-val.red    { color: var(--accent3); }
+    .metric-sub {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    /* ── Bar comparison ───────────────────────────────────────── */
+    .bar-compare {
+      margin-bottom: 20px;
+    }
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .bar-label {
+      width: 80px;
+      font-size: 12px;
+      color: var(--muted);
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .bar-track {
+      flex: 1;
+      height: 8px;
+      background: var(--surface2);
+      border-radius: 50px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 50px;
+      transition: width 0.7s cubic-bezier(.4,0,.2,1);
+    }
+    .bar-fill.exact   { background: var(--muted); }
+    .bar-fill.approx  { background: var(--accent); }
+    .bar-val {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text);
+      width: 80px;
+      flex-shrink: 0;
+    }
+    .bar-save-badge {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--accent);
+      background: rgba(74,240,180,0.1);
+      border-radius: 50px;
+      padding: 1px 8px;
+    }
+
+    /* ── Reason box ───────────────────────────────────────────── */
+    .reason-box {
+      background: var(--surface2);
+      border-left: 3px solid var(--accent2);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: 14px 18px;
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    /* ── Profile table ────────────────────────────────────────── */
+    .table-wrap { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    thead th {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    tbody td {
+      padding: 11px 14px;
+      border-bottom: 1px solid rgba(35,40,55,0.6);
+      vertical-align: middle;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: rgba(255,255,255,0.02); }
+    .td-mono { font-family: var(--mono); font-size: 12px; }
+    .td-acc  { font-family: var(--mono); color: var(--accent); font-weight: 600; }
+    .td-t    { font-family: var(--mono); color: var(--accent2); }
+
+    /* ── Error detail row ─────────────────────────────────────── */
+    .exact-mismatch-note {
+      background: rgba(245,167,66,0.07);
+      border: 1px solid rgba(245,167,66,0.18);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      font-size: 13px;
+      color: #f5c072;
+      margin-bottom: 16px;
+      font-family: var(--mono);
+    }
+
+    /* ── Responsive ───────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .metrics-grid { grid-template-columns: 1fr 1fr; }
+      .equation-block { flex-direction: column; align-items: flex-start; }
+      .eq-result-box { margin-left: 0; text-align: left; }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-label">Quantum Circuit Research Tool</div>
+    <h1>Quantum Division <span>Explorer</span></h1>
+    <p>Simulate exact &amp; approximate quantum restoring division circuits. Explore accuracy–gate-cost trade-offs.</p>
+  </div>
+
+  <!-- Input card -->
+  <div class="card">
+    <div class="card-title">Division Parameters</div>
+
+    <!-- Primary inputs -->
+    <div class="form-grid">
+      <div class="field">
+        <label>Dividend</label>
+        <input type="number" id="dividend" value="123" min="0" />
+      </div>
+      <div class="field">
+        <label>Divisor</label>
+        <input type="number" id="divisor" value="10" min="1" />
+      </div>
+      <div class="field">
+        <label>Bit-width <em style="font-style:normal;color:var(--muted)">(n)</em></label>
+        <input type="number" id="n_bits" value="16" min="2" max="128" />
+      </div>
+      <div class="field">
+        <label>Method</label>
+        <select id="method">
+          <option value="auto">Auto (Adaptive Selector)</option>
+          <option value="exact">Exact</option>
+          <option value="approx_truncated">Approximate (truncated)</option>
+          <option value="early_stop">Early Stop</option>
+          <option value="hybrid">Hybrid</option>
+        </select>
+      </div>
+      <div class="field" id="accuracy-field">
+        <label>Accuracy Target <em style="font-style:normal;color:var(--muted)">(auto mode)</em></label>
+        <input type="number" id="accuracy_target" value="0.99" step="0.01" min="0" max="1" />
+      </div>
+    </div>
+
+    <!-- approx_truncated params -->
+    <div class="extra-params" id="params-approx">
+      <div class="field">
+        <label>k — comparison bits</label>
+        <input type="number" id="param-k-approx" value="12" min="2" />
+        <div class="param-hint">Top k bits used in comparison (k &lt; n)</div>
+      </div>
+    </div>
+
+    <!-- early_stop params -->
+    <div class="extra-params" id="params-early">
+      <div class="field">
+        <label>m — steps to compute</label>
+        <input type="number" id="param-m" value="12" min="1" />
+        <div class="param-hint">Compute only the top m quotient bits</div>
+      </div>
+    </div>
+
+    <!-- hybrid params -->
+    <div class="extra-params" id="params-hybrid">
+      <div class="field">
+        <label>h — exact MSB steps</label>
+        <input type="number" id="param-h" value="8" min="1" />
+        <div class="param-hint">Number of exact restoring steps</div>
+      </div>
+      <div class="field">
+        <label>k — approx comparison bits</label>
+        <input type="number" id="param-k-hybrid" value="12" min="2" />
+        <div class="param-hint">Truncated comparison for remaining steps</div>
+      </div>
+    </div>
+
+    <!-- Error banner -->
+    <div class="error-banner" id="error-banner"></div>
+
+    <button class="btn-submit" id="submit-btn" onclick="runCompute()">
+      <span class="spinner"></span>
+      <span class="btn-label">Compute Division</span>
+    </button>
+  </div>
+
+  <!-- Results -->
+  <div id="results">
+
+    <!-- Equation -->
+    <div class="card">
+      <div class="card-title">Division Result</div>
+      <div class="equation-block">
+        <div class="eq-num" id="eq-dividend">—</div>
+        <div class="eq-op">÷</div>
+        <div class="eq-num" id="eq-divisor">—</div>
+        <div class="eq-op">=</div>
+        <div>
+          <div class="eq-result-label">Exact classical</div>
+          <div class="eq-result-val exact" id="eq-exact">—</div>
+        </div>
+        <div class="eq-op">→</div>
+        <div>
+          <div class="eq-result-label">Quantum result <span id="exact-pill"></span></div>
+          <div class="eq-result-val" id="eq-quantum">—</div>
+        </div>
+        <div class="eq-result-box">
+          <div class="eq-result-label">Method</div>
+          <div id="method-pill"></div>
+        </div>
+      </div>
+
+      <!-- mismatch note -->
+      <div class="exact-mismatch-note" id="mismatch-note" style="display:none"></div>
+
+      <!-- Selection reason -->
+      <div class="reason-box" id="reason-box">—</div>
+    </div>
+
+    <!-- Resource metrics -->
+    <div class="card">
+      <div class="card-title">Circuit Resources</div>
+      <div class="metrics-grid">
+        <div class="metric-tile">
+          <div class="metric-label">T-count</div>
+          <div class="metric-val green" id="m-tcount">—</div>
+          <div class="metric-sub" id="m-tcount-save"></div>
+        </div>
+        <div class="metric-tile accent2">
+          <div class="metric-label">T-depth</div>
+          <div class="metric-val purple" id="m-tdepth">—</div>
+          <div class="metric-sub" id="m-tdepth-baseline"></div>
+        </div>
+        <div class="metric-tile">
+          <div class="metric-label">CNOT count</div>
+          <div class="metric-val green" id="m-cnot">—</div>
+          <div class="metric-sub" id="m-cnot-save"></div>
+        </div>
+        <div class="metric-tile accent2">
+          <div class="metric-label">Qubits</div>
+          <div class="metric-val purple" id="m-qubits">—</div>
+          <div class="metric-sub">physical qubits</div>
+        </div>
+        <div class="metric-tile">
+          <div class="metric-label">Accuracy (model)</div>
+          <div class="metric-val green" id="m-acc">—</div>
+          <div class="metric-sub" id="m-acc-sub"></div>
+        </div>
+        <div class="metric-tile warn" id="m-err-tile">
+          <div class="metric-label">Relative error</div>
+          <div class="metric-val" id="m-relerr">—</div>
+          <div class="metric-sub">this run</div>
+        </div>
+      </div>
+
+      <!-- T-count bar comparison -->
+      <div class="bar-compare">
+        <div class="bar-row">
+          <div class="bar-label">Exact</div>
+          <div class="bar-track"><div class="bar-fill exact" id="bar-exact" style="width:100%"></div></div>
+          <div class="bar-val" id="bar-exact-val">—</div>
+          <div style="width:60px"></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Selected</div>
+          <div class="bar-track"><div class="bar-fill approx" id="bar-sel" style="width:100%"></div></div>
+          <div class="bar-val" id="bar-sel-val">—</div>
+          <div class="bar-save-badge" id="bar-save-badge"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile recommendations -->
+    <div class="card">
+      <div class="card-title">Adaptive Selector — Profile Recommendations</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Profile</th>
+              <th>Method</th>
+              <th>T-count</th>
+              <th>T-depth</th>
+              <th>CNOT</th>
+              <th>Accuracy</th>
+            </tr>
+          </thead>
+          <tbody id="profile-tbody">
+            <tr><td colspan="6" style="color:var(--muted);text-align:center;padding:20px">Run a computation to see profile recommendations</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /results -->
+</div><!-- /page-wrap -->
+
+<script>
+/* ── Method → params panel visibility ──────────────────────────── */
+const methodSel   = document.getElementById('method');
+const paramPanels = {
+  approx_truncated: document.getElementById('params-approx'),
+  early_stop:       document.getElementById('params-early'),
+  hybrid:           document.getElementById('params-hybrid'),
+};
+const accuracyField = document.getElementById('accuracy-field');
+
+function updateParamPanels() {
+  const m = methodSel.value;
+  Object.entries(paramPanels).forEach(([key, el]) => {
+    el.classList.toggle('visible', key === m);
+  });
+  accuracyField.style.opacity = m === 'auto' ? '1' : '0.4';
+}
+methodSel.addEventListener('change', updateParamPanels);
+updateParamPanels();
+
+/* ── Build request payload ────────────────────────────────────── */
+function buildPayload() {
+  const method = methodSel.value;
+  const payload = {
+    dividend:        parseInt(document.getElementById('dividend').value) || 0,
+    divisor:         parseInt(document.getElementById('divisor').value)  || 1,
+    n_bits:          parseInt(document.getElementById('n_bits').value)   || 16,
+    method,
+    accuracy_target: parseFloat(document.getElementById('accuracy_target').value) || 0.99,
+  };
+  if (method === 'approx_truncated') {
+    payload.k = parseInt(document.getElementById('param-k-approx').value) || null;
+  } else if (method === 'early_stop') {
+    payload.m = parseInt(document.getElementById('param-m').value) || null;
+  } else if (method === 'hybrid') {
+    payload.h = parseInt(document.getElementById('param-h').value) || null;
+    payload.k = parseInt(document.getElementById('param-k-hybrid').value) || null;
+  }
+  return payload;
+}
+
+/* ── Helpers ─────────────────────────────────────────────────── */
+function fmtNum(n) {
+  if (n === null || n === undefined) return '—';
+  return Number(n).toLocaleString();
+}
+function fmtPct(n) {
+  if (n === null || n === undefined) return '';
+  return (n >= 0 ? '+' : '') + n.toFixed(2) + '%';
+}
+function setHTML(id, html) {
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = html;
+}
+function setText(id, txt) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = txt;
+}
+
+/* ── Method label map ─────────────────────────────────────────── */
+const METHOD_LABELS = {
+  exact:            'Exact',
+  approx_truncated: 'Approx (truncated)',
+  early_stop:       'Early Stop',
+  hybrid:           'Hybrid',
+};
+const PROFILE_LABELS = {
+  exact:          '🔒 Exact',
+  high_precision: '🎯 High Precision',
+  standard:       '⚡ Standard',
+  fast:           '🚀 Fast',
+  ultra_fast:     '💨 Ultra Fast',
+};
+
+/* ── Render results ───────────────────────────────────────────── */
+function renderResults(data) {
+  const res  = data.result;
+  const meth = data.method;
+  const rsc  = data.resources;
+  const ex   = data.exact_resources;
+  const sav  = data.savings;
+
+  // Show results section
+  document.getElementById('results').classList.add('visible');
+
+  // Equation
+  setText('eq-dividend', fmtNum(data.input.dividend));
+  setText('eq-divisor',  fmtNum(data.input.divisor));
+  document.getElementById('eq-exact').textContent =
+    `${fmtNum(res.exact_quotient)} R ${fmtNum(res.exact_remainder)}`;
+  document.getElementById('eq-quantum').textContent =
+    `${fmtNum(res.quotient)} R ${fmtNum(res.remainder)}`;
+  document.getElementById('eq-quantum').className =
+    'eq-result-val ' + (res.is_exact ? 'exact' : 'approx');
+
+  // Pills
+  setHTML('exact-pill',
+    `<span class="pill ${res.is_exact ? 'pill-exact' : 'pill-approx'}">
+      ${res.is_exact ? '✓ Exact' : '~ Approximate'}
+    </span>`
+  );
+  const mLabel = METHOD_LABELS[meth.name] || meth.name;
+  let mParamStr = '';
+  if (meth.params.k) mParamStr += ` k=${meth.params.k}`;
+  if (meth.params.h) mParamStr += ` h=${meth.params.h}`;
+  if (meth.params.m) mParamStr += ` m=${meth.params.m}`;
+  setHTML('method-pill',
+    `<span class="pill pill-method">${mLabel}${mParamStr}</span>`
+  );
+
+  // Mismatch note
+  const mNote = document.getElementById('mismatch-note');
+  if (!res.is_exact && res.quotient_error > 0) {
+    mNote.style.display = 'block';
+    mNote.textContent =
+      `Quotient error: ${fmtNum(res.quotient_error)} ` +
+      `(relative: ${(res.relative_error * 100).toFixed(4)}%)`;
+  } else {
+    mNote.style.display = 'none';
+  }
+
+  // Reason
+  setText('reason-box', meth.reason || '—');
+
+  // Resource metrics
+  if (rsc) {
+    setText('m-tcount',  fmtNum(rsc.t_count));
+    setText('m-tdepth',  fmtNum(rsc.t_depth));
+    setText('m-cnot',    fmtNum(rsc.cnot_count));
+    setText('m-qubits',  fmtNum(rsc.n_qubits));
+    setText('m-acc',     (rsc.accuracy * 100).toFixed(4) + '%');
+
+    if (sav.t_count_pct !== 0) {
+      setText('m-tcount-save', sav.t_count_pct.toFixed(2) + '% vs exact');
+      setText('m-cnot-save',   sav.cnot_pct.toFixed(2)    + '% vs exact');
+    } else {
+      setText('m-tcount-save', 'baseline (exact)');
+      setText('m-cnot-save',   'baseline (exact)');
+    }
+    if (ex) {
+      setText('m-tdepth-baseline', 'exact baseline: ' + fmtNum(ex.t_depth));
+    }
+    setText('m-acc-sub', rsc.method === 'exact' ? 'guaranteed exact' : 'analytical bound');
+  }
+
+  // Relative error tile
+  const relErr = res.relative_error;
+  setText('m-relerr',
+    relErr === null  ? '—' :
+    relErr === 0     ? '0.000000' :
+    relErr.toFixed(6)
+  );
+
+  // Bar chart
+  if (rsc && ex) {
+    const maxT = ex.t_count;
+    const selT = rsc.t_count;
+    const pct  = maxT > 0 ? (selT / maxT * 100).toFixed(1) : 100;
+
+    document.getElementById('bar-exact').style.width = '100%';
+    document.getElementById('bar-sel').style.width   = pct + '%';
+    setText('bar-exact-val', fmtNum(maxT) + ' T');
+    setText('bar-sel-val',   fmtNum(selT) + ' T');
+    if (sav.t_count_pct > 0) {
+      setText('bar-save-badge', '−' + sav.t_count_pct.toFixed(1) + '% T-gates');
+    } else {
+      setText('bar-save-badge', 'exact baseline');
+    }
+  }
+
+  // Profile recommendations table
+  const tbody = document.getElementById('profile-tbody');
+  tbody.innerHTML = '';
+  if (data.profiles) {
+    Object.entries(data.profiles).forEach(([key, info]) => {
+      const tr = document.createElement('tr');
+      const label = PROFILE_LABELS[key] || key;
+      tr.innerHTML = `
+        <td>${label}</td>
+        <td><span class="pill pill-method">${METHOD_LABELS[info.method] || info.method}</span></td>
+        <td class="td-t">${fmtNum(info.t_count)}</td>
+        <td class="td-mono">${fmtNum(info.t_depth)}</td>
+        <td class="td-mono">${fmtNum(info.cnot_count)}</td>
+        <td class="td-acc">${(info.accuracy * 100).toFixed(4)}%</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+}
+
+/* ── Main compute function ────────────────────────────────────── */
+async function runCompute() {
+  const btn    = document.getElementById('submit-btn');
+  const errBnr = document.getElementById('error-banner');
+
+  // Validate
+  const divisor = parseInt(document.getElementById('divisor').value);
+  if (!divisor || divisor === 0) {
+    showError('Divisor cannot be zero.');
+    return;
+  }
+  const nBits = parseInt(document.getElementById('n_bits').value);
+  if (nBits < 2 || nBits > 128) {
+    showError('Bit-width (n) must be between 2 and 128.');
+    return;
+  }
+
+  // Loading state
+  errBnr.classList.remove('visible');
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  try {
+    const payload = buildPayload();
+    const resp = await fetch('/compute', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload),
+    });
+    const data = await resp.json();
+
+    if (!resp.ok || data.error) {
+      showError(data.error || `Server error ${resp.status}`);
+      return;
+    }
+    renderResults(data);
+
+  } catch (err) {
+    showError('Network error: ' + err.message);
+  } finally {
+    btn.classList.remove('loading');
+    btn.disabled = false;
+  }
+}
+
+function showError(msg) {
+  const el = document.getElementById('error-banner');
+  el.textContent = '⚠ ' + msg;
+  el.classList.add('visible');
+}
+
+/* ── Allow Enter key to submit ────────────────────────────────── */
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && e.target.tagName !== 'BUTTON') runCompute();
+});
+
+/* ── Auto-update default k/m/h when n changes ─────────────────── */
+document.getElementById('n_bits').addEventListener('change', function() {
+  const n = parseInt(this.value) || 16;
+  document.getElementById('param-k-approx').value = Math.ceil(n * 0.75);
+  document.getElementById('param-m').value         = Math.ceil(n * 0.75);
+  document.getElementById('param-h').value         = Math.floor(n / 2);
+  document.getElementById('param-k-hybrid').value  = Math.ceil(n * 0.75);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+method,n_bits,n_trials,exact_count,accuracy,mean_rel_error,k_bits,m_steps
+exact,4,40,40,1.0,0.0,,
+approx_truncated,4,40,23,0.575,0.2346474358974359,3,
+approx_truncated,4,40,23,0.575,0.19490384615384612,2,
+early_stop,4,40,28,0.7,0.2069230769230769,,3
+hybrid,4,40,26,0.65,0.17916666666666664,3,

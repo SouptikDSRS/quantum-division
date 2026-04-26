@@ -1,0 +1,41 @@
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{lrrrrrr}
+\toprule
+$n$ & Method & T-count & T-depth & CNOT & Accuracy & T-saving (\%) \\
+\midrule
+8 & exact & 232 & 64 & 376 & 1.0000 & 0.00 \\
+\midrule
+8 & hybrid & 208 & 64 & 324 & 0.9961 & 10.34 \\
+\midrule
+8 & approx_truncated & 104 & 48 & 168 & 0.5967 & 55.17 \\
+\midrule
+12 & exact & 540 & 120 & 852 & 1.0000 & 0.00 \\
+\midrule
+12 & hybrid & 492 & 114 & 756 & 0.9996 & 8.89 \\
+\midrule
+12 & approx_truncated & 252 & 96 & 396 & 0.8278 & 53.33 \\
+\midrule
+16 & exact & 976 & 160 & 1520 & 1.0000 & 0.00 \\
+\midrule
+16 & hybrid & 880 & 160 & 1344 & 1.0000 & 9.84 \\
+\midrule
+16 & approx_truncated & 464 & 128 & 720 & 0.9393 & 52.46 \\
+\midrule
+24 & exact & 2232 & 288 & 3432 & 1.0000 & 0.00 \\
+\midrule
+24 & hybrid & 2016 & 276 & 3060 & 1.0000 & 9.68 \\
+\midrule
+24 & approx_truncated & 1080 & 240 & 1656 & 0.9942 & 51.61 \\
+\midrule
+32 & exact & 4000 & 384 & 6112 & 1.0000 & 0.00 \\
+\midrule
+32 & hybrid & 3616 & 384 & 5472 & 1.0000 & 9.60 \\
+\midrule
+32 & approx_truncated & 1952 & 320 & 2976 & 0.9995 & 51.20 \\
+\bottomrule
+\end{tabular}
+\caption{Quantum division resource comparison (paper vs our methods vs hardware)}
+\label{tab:comparison}
+\end{table}

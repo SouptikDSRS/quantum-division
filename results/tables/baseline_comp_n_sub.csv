@@ -1,0 +1,8 @@
+n_bits,t_count_paper,t_count_ours,cnot_paper,cnot_ours,t_depth_paper,t_depth_ours,match
+4,13,13,21,21,6,6,True
+8,29,29,45,45,8,8,True
+12,45,45,69,69,10,10,True
+16,61,61,93,93,10,10,True
+24,93,93,141,141,12,12,True
+32,125,125,189,189,12,12,True
+64,253,253,381,381,14,14,True

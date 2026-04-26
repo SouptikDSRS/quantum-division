@@ -1,0 +1,30 @@
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{lrrrrrr}
+\toprule
+Method & T-count & T-depth & CNOT & Accuracy & T-saving (\%) & CNOT-saving (\%) \\
+\midrule
+exact & 976 & 160 & 1520 & 1.0000 & 0.00 & 0.00 \\
+\midrule
+hybrid & 880 & 160 & 1344 & 1.0000 & 9.84 & 11.58 \\
+hybrid & 912 & 160 & 1392 & 0.9999 & 6.56 & 8.42 \\
+hybrid & 944 & 160 & 1440 & 0.9998 & 3.28 & 5.26 \\
+hybrid & 784 & 160 & 1200 & 0.9995 & 19.67 & 21.05 \\
+hybrid & 848 & 160 & 1296 & 0.9980 & 13.11 & 14.74 \\
+hybrid & 912 & 160 & 1392 & 0.9922 & 6.56 & 8.42 \\
+hybrid & 688 & 160 & 1056 & 0.9883 & 29.51 & 30.53 \\
+hybrid & 784 & 160 & 1200 & 0.9531 & 19.67 & 21.05 \\
+\midrule
+approx_truncated & 464 & 128 & 720 & 0.9393 & 52.46 & 52.63 \\
+\midrule
+hybrid & 880 & 160 & 1344 & 0.8125 & 9.84 & 11.58 \\
+\midrule
+approx_truncated & 592 & 160 & 912 & 0.7773 & 39.34 & 40.00 \\
+approx_truncated & 720 & 160 & 1104 & 0.3561 & 26.23 & 27.37 \\
+approx_truncated & 848 & 160 & 1296 & 0.0100 & 13.11 & 14.74 \\
+\bottomrule
+\end{tabular}
+\caption{Full cost-accuracy trade-off for $n=16$-bit division (hardware included if enabled)}
+\label{tab:tradeoff}
+\end{table}

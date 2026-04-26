@@ -1,0 +1,30 @@
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{lrrrrrr}
+\toprule
+Method & $n$ & T-count & T-depth & CNOT & Accuracy & T-saving (\%) \\
+\midrule
+exact & 16 & 976 & 160 & 1520 & 1.0000 & 0.00 \\
+\midrule
+hybrid & 16 & 880 & 160 & 1344 & 1.0000 & 9.84 \\
+hybrid & 16 & 912 & 160 & 1392 & 0.9999 & 6.56 \\
+hybrid & 16 & 944 & 160 & 1440 & 0.9998 & 3.28 \\
+hybrid & 16 & 784 & 160 & 1200 & 0.9995 & 19.67 \\
+hybrid & 16 & 848 & 160 & 1296 & 0.9980 & 13.11 \\
+hybrid & 16 & 912 & 160 & 1392 & 0.9922 & 6.56 \\
+hybrid & 16 & 688 & 160 & 1056 & 0.9883 & 29.51 \\
+hybrid & 16 & 784 & 160 & 1200 & 0.9531 & 19.67 \\
+\midrule
+approx_truncated & 16 & 464 & 128 & 720 & 0.9393 & 52.46 \\
+\midrule
+hybrid & 16 & 880 & 160 & 1344 & 0.8125 & 9.84 \\
+\midrule
+approx_truncated & 16 & 592 & 160 & 912 & 0.7773 & 39.34 \\
+approx_truncated & 16 & 720 & 160 & 1104 & 0.3561 & 26.23 \\
+approx_truncated & 16 & 848 & 160 & 1296 & 0.0100 & 13.11 \\
+\bottomrule
+\end{tabular}
+\caption{Resource comparison}
+\label{tab:resource_comparison}
+\end{table}

@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+*.pyo
+*.so
+.Python
+env/
+venv/
+.vscode/
+.idea/
+*.egg-info/
+dist/
+build/
+results/hardware_cache.json
+results/plots/*.png   # omit if you want to keep plots
+*.log
+.DS_Store
