@@ -1,5 +1,5 @@
-from src.llm_optimizer import run_ai_optimizer
-from src.division_engine import DivisionEngine
+from quantum_division.llm_optimizer import run_ai_optimizer
+from quantum_division.division_engine import DivisionEngine
 
 
 def main():

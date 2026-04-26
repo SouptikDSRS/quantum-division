@@ -25,18 +25,18 @@ from typing import Optional, List, Dict, Any
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 # Paper modules (simulation, adaptive, etc.)
-from src.adaptive_selector import (
+from quantum_division.adaptive_selector import (
     AdaptiveSelector, SelectionCriteria, AppProfile
 )
-from src.division_engine import ExactDivisionEngine
-from src.metrics import (
+from quantum_division.division_engine import ExactDivisionEngine
+from quantum_division.metrics import (
     full_comparison_table,
     scaling_analysis,
     print_summary,
     to_csv,
     to_latex_table,
 )
-from src.classical_simulator import DivisionSimulator
+from quantum_division.classical_simulator import DivisionSimulator
 
 # Qiskit bridge (simulation + hardware)
 from qiskit_impl.qiskit_bridge import QiskitDivisionRunner
@@ -314,7 +314,7 @@ def run_scaling():
     print("  SCALING ANALYSIS (T-count vs n) – Simulated only")
     print("=" * 65)
 
-    from src.metrics import scaling_analysis
+    from quantum_division.metrics import scaling_analysis
     bit_widths = [4, 6, 8, 10, 12, 16, 20, 24, 32, 48, 64]
     rows = scaling_analysis(bit_widths)   # uses corrected hybrid_best / hybrid_fast
 
@@ -353,7 +353,7 @@ def generate_plots(
         print("=" * 65)
 
         # Plot 1: T-count scaling (simulated only)
-        from src.plotting import plot_scaling, plot_pareto
+        from quantum_division.plotting import plot_scaling, plot_pareto
         path = plot_scaling(scaling_rows)
         print(f"  [✓] Scaling plot            → {path}")
 

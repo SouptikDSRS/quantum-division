@@ -16,15 +16,15 @@ import os
 import math
 from flask import Flask, render_template, request, jsonify
 
-from src.classical_simulator import DivisionSimulator
-from src.adaptive_selector import AdaptiveSelector, SelectionCriteria, AppProfile
-from src.division_engine import (
+from quantum_division.classical_simulator import DivisionSimulator
+from quantum_division.adaptive_selector import AdaptiveSelector, SelectionCriteria, AppProfile
+from quantum_division.division_engine import (
     ExactDivisionEngine,
     ApproxDivisionEngine,
     EarlyStopDivisionEngine,
     HybridDivisionEngine,
 )
-from src.metrics import scaling_analysis, full_comparison_table
+from quantum_division.metrics import scaling_analysis, full_comparison_table
 
 app = Flask(__name__)
 

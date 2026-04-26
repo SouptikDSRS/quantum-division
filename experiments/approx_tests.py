@@ -4,10 +4,10 @@ approx_tests.py — Real PennyLane quantum simulation of division circuits.
 import sys, os, math
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from src.pennylane_simulator import PennyLaneSimulator
-from src.comp_n_sub import CompNSub, ApproxCompNSub
-from src.division_engine import ExactDivisionEngine, ApproxDivisionEngine
-from src.metrics import to_csv
+from quantum_division.pennylane_simulator import PennyLaneSimulator
+from quantum_division.comp_n_sub import CompNSub, ApproxCompNSub
+from quantum_division.division_engine import ExactDivisionEngine, ApproxDivisionEngine
+from quantum_division.metrics import to_csv
 
 
 def test_exact_correctness_pennylane(n_bits=4):

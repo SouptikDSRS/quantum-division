@@ -28,9 +28,9 @@ import math
 # Make src importable
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from src.comp_n_sub import CompNSub
-from src.division_engine import ExactDivisionEngine
-from src.metrics import to_csv, to_latex_table
+from quantum_division.comp_n_sub import CompNSub
+from quantum_division.division_engine import ExactDivisionEngine
+from quantum_division.metrics import to_csv, to_latex_table
 
 
 def paper_comp_n_sub_cost(n: int) -> dict:

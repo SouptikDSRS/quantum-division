@@ -26,7 +26,7 @@ iterations the quotient bits accumulate in a separate output register
 
 Usage
 ─────
->>> from src.pennylane_simulator import PennyLaneSimulator
+>>> from quantum_division.pennylane_simulator import PennyLaneSimulator
 >>> sim = PennyLaneSimulator()
 >>> result = sim.run_division(dividend=13, divisor=5, n_bits=4)
 >>> print(result)          # quotient=2, remainder=3
